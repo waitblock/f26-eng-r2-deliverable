@@ -78,6 +78,42 @@ export default function SpeciesDetailsDialog({ species, userId }: { species: Spe
     setDescriptionText(species.description ?? "");
   }
 
+  const deleteSpecies: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+
+    const confirm = window.confirm(
+      `Are you sure you want to delete ${species.scientific_name}?`,
+    );
+
+    if(!confirm) return;
+
+    void (async () => {
+      const supabase = createBrowserSupabaseClient();
+
+      const { error } = await supabase
+        .from("species")
+        .delete()
+        .eq("id", species.id)
+        .eq("author", userId);
+
+      if (error) {
+        toast({
+          title: "Something went wrong.",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      router.refresh();
+
+      toast({
+        title: "Species deleted.",
+        description: "Successfully deleted species from database.",
+      });
+    })();
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
@@ -239,6 +275,13 @@ export default function SpeciesDetailsDialog({ species, userId }: { species: Spe
               ) : (
                 <Button type={"submit"}>Submit changes</Button>
               ))}
+
+            {userId === species.author && !isEditing &&
+              (<Button type={"button"}
+                        variant={"destructive"}
+                        className={"ml-4"}
+              onClick={deleteSpecies}>Delete species data</Button>)
+            }
 
             {isEditing && (
               <Button type={"button"}

@@ -138,7 +138,7 @@ export default function AnimalSpeedGraph() {
       .attr("y", height-40)
       .attr("text-anchor", "middle")
       .attr("fill", "currentColor")
-      .text("Animal Name");
+      .text("Animal");
 
     svg.append("text")
       .attr(
