@@ -54,6 +54,7 @@ type SpeciesInput = z.infer<typeof speciesSchema>;
 
 export default function SpeciesDetailsDialog({ species, userId }: { species: Species; userId: string }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const [sciName, setSciName] = useState(species.scientific_name);
@@ -105,6 +106,7 @@ export default function SpeciesDetailsDialog({ species, userId }: { species: Spe
         return;
       }
 
+      setIsOpen(false);
       router.refresh();
 
       toast({
@@ -174,7 +176,9 @@ export default function SpeciesDetailsDialog({ species, userId }: { species: Spe
 
   return (
     <Dialog
+      open={isOpen}
       onOpenChange={(open) => {
+        setIsOpen(open);
         if (!open) setIsEditing(false);
       }}
     >
